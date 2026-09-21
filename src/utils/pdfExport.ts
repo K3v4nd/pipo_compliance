@@ -10,10 +10,10 @@ export async function exportToPdf(elementId: string, filename: string): Promise<
   try {
     // Dynamic import to support SSR/bundler variations safely
     const html2pdfModule = await import('html2pdf.js');
-    const html2pdf = html2pdfModule.default || html2pdfModule;
+    const html2pdf = (html2pdfModule as any).default || html2pdfModule;
 
     const opt = {
-      margin: [6, 6, 6, 6] as [number, number, number, number], // mm margins
+      margin: [4, 4, 4, 4] as [number, number, number, number], // mm margins
       filename: `${filename.replace(/[/\\?%*:|"<>]/g, '_')}.pdf`,
       image: { type: 'jpeg' as const, quality: 0.98 },
       html2canvas: {
@@ -35,12 +35,17 @@ export async function exportToPdf(elementId: string, filename: string): Promise<
     await html2pdf().set(opt).from(element).save();
     return true;
   } catch (err) {
-    console.error('Error generating PDF with html2pdf, falling back to window.print', err);
-    window.print();
+    console.error('Error generating PDF with html2pdf, falling back to triggerBrowserPrint', err);
+    triggerBrowserPrint();
     return false;
   }
 }
 
+/**
+ * Trigger clean browser print dialog.
+ * Prepares the DOM so only the active letter sheet is sent to the printer/PDF dialogue.
+ */
 export function triggerBrowserPrint() {
   window.print();
 }
+

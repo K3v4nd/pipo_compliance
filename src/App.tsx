@@ -574,7 +574,7 @@ export default function App() {
       <main className="max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 flex-1">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Left Column: Interactive Form Editor (no-print) */}
-          <section className={`lg:col-span-5 space-y-4 no-print ${mobileView === 'preview' ? 'hidden lg:block' : 'block'}`}>
+          <section className={`lg:col-span-5 space-y-4 editor-sidebar-column no-print ${mobileView === 'preview' ? 'hidden lg:block' : 'block'}`}>
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-5">
               <div className="flex items-center justify-between pb-3 mb-3 border-b border-gray-200">
                 <div>
@@ -668,7 +668,7 @@ export default function App() {
           </section>
 
           {/* Right Column: Live Printable Sheet Preview */}
-          <section className={`lg:col-span-7 flex flex-col items-center ${mobileView === 'editor' ? 'hidden lg:flex' : 'flex'}`}>
+          <section className={`lg:col-span-7 flex flex-col items-center printable-sheet-container ${mobileView === 'editor' ? 'hidden lg:flex' : 'flex'}`}>
             {/* Sheet Sub-toolbar */}
             <div className="w-full max-w-[215.9mm] flex items-center justify-between mb-2.5 px-2 no-print text-xs">
               <div className="flex items-center space-x-2 text-gray-600">
