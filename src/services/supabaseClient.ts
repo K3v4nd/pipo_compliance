@@ -374,7 +374,7 @@ export function generateSupabaseSQL(tableName = 'registros_cumplimiento'): strin
 -- =========================================================
 
 CREATE TABLE IF NOT EXISTS public.${tableName} (
-    id TEXT PRIMARY KEY,
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     form_type TEXT NOT NULL,
     title TEXT NOT NULL,
     client_or_provider_name TEXT NOT NULL,

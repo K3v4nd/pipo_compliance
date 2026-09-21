@@ -66,7 +66,8 @@ import {
   Lock,
   ShieldCheck,
   LogOut,
-  Key
+  Key,
+  Loader2
 } from 'lucide-react';
 import { AdminAuthModal } from './components/modals/AdminAuthModal';
 
@@ -298,6 +299,7 @@ export default function App() {
   // Reset to default sample
   const handleResetSample = () => {
     if (confirm('¿Restablecer este formulario a los datos de ejemplo predeterminados?')) {
+      setCurrentLoadedRecordId(null);
       if (activeTab === 'PROV_NATURAL') setProvNatData(DEFAULT_PROV_NATURAL);
       if (activeTab === 'PROV_JURIDICO') setProvJurData(DEFAULT_PROV_JURIDICO);
       if (activeTab === 'CLIENTE_JURIDICO') setCliJurData(DEFAULT_CLIENTE_JURIDICO);

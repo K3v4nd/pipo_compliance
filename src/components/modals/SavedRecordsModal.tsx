@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FormType, StoredRecord } from '../../types';
-import { fetchAllRecords, deleteRecord } from '../../services/supabaseClient';
+import { fetchAllRecords, deleteRecord, syncPendingRecordsToSupabase } from '../../services/supabaseClient';
 import { 
   FolderClock, 
   Trash2, 
@@ -11,7 +11,8 @@ import {
   UserCheck, 
   FileText,
   Search,
-  ArrowRight
+  ArrowRight,
+  RefreshCw
 } from 'lucide-react';
 
 interface Props {
@@ -31,6 +32,28 @@ export const SavedRecordsModal: React.FC<Props> = ({
   const [loading, setLoading] = useState(true);
   const [filterType, setFilterType] = useState<string>('ALL');
   const [searchTerm, setSearchTerm] = useState('');
+  const [syncing, setSyncing] = useState(false);
+  const [syncMessage, setSyncMessage] = useState<string | null>(null);
+
+  const pendingCount = records.filter(r => !r.synced_to_supabase).length;
+
+  const handleSyncPending = async () => {
+    setSyncing(true);
+    setSyncMessage(null);
+    try {
+      const res = await syncPendingRecordsToSupabase();
+      if (res.synced > 0) {
+        setSyncMessage(`¡${res.synced} registro(s) sincronizados con Supabase exitosamente!`);
+      } else if (res.failed > 0) {
+        setSyncMessage(`No se pudieron sincronizar ${res.failed} registro(s). Verifica tu conexión o credenciales.`);
+      } else {
+        setSyncMessage('Todos los registros ya están al día en Supabase.');
+      }
+      await loadData();
+    } finally {
+      setSyncing(false);
+    }
+  };
 
   const loadData = async () => {
     setLoading(true);
@@ -136,6 +159,19 @@ export const SavedRecordsModal: React.FC<Props> = ({
               <option value="CLIENTE_NATURAL">Cliente Natural</option>
             </select>
 
+            {pendingCount > 0 && (
+              <button
+                type="button"
+                onClick={handleSyncPending}
+                disabled={syncing}
+                className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium flex items-center space-x-1 transition-colors disabled:opacity-50"
+                title="Sincronizar expedientes pendientes a Supabase"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${syncing ? 'animate-spin' : ''}`} />
+                <span>Subir {pendingCount} a Supabase</span>
+              </button>
+            )}
+
             <button
               type="button"
               onClick={handleExportJson}
@@ -146,6 +182,13 @@ export const SavedRecordsModal: React.FC<Props> = ({
             </button>
           </div>
         </div>
+
+        {syncMessage && (
+          <div className="px-6 py-2 bg-blue-50 border-b border-blue-100 text-blue-800 text-xs flex items-center justify-between">
+            <span>{syncMessage}</span>
+            <button onClick={() => setSyncMessage(null)} className="text-blue-500 hover:text-blue-700 font-bold ml-2">×</button>
+          </div>
+        )}
 
         {/* Records List */}
         <div className="p-6 overflow-y-auto flex-1 text-xs">
