@@ -15,7 +15,7 @@ export const DEFAULT_COMPANY: CompanyConfig = {
   rif: env.VITE_COMPANY_RIF || 'J-07513364-1',
   address: env.VITE_COMPANY_ADDRESS || 'Av. Principal El Castaño / Maracay, Edo. Aragua',
   phones: env.VITE_COMPANY_PHONES || '0243-2413111 / 0243-2411990',
-  email: env.VITE_COMPANY_EMAIL || 'cumplimiento@hotelpipointernacional.com',
+  email: env.VITE_COMPANY_EMAIL || 'cumplimiento@hotelpipo.com',
   website: env.VITE_COMPANY_WEBSITE || 'WWW.HOTELPIPO.COM',
   logoUrl: env.VITE_COMPANY_LOGO_URL || PIPO_DEFAULT_LOGO_SVG,
   defaultDeptResp: env.VITE_COMPANY_DEPT || 'Departamento Responsable / Administración',

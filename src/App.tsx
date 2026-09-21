@@ -105,6 +105,11 @@ export default function App() {
           parsed.website = 'WWW.HOTELPIPO.COM';
           updated = true;
         }
+        // Automatically upgrade email to official cumplimiento@hotelpipo.com
+        if (!parsed.email || parsed.email.includes('hotelpipointernacional') || parsed.email.includes('hesperia')) {
+          parsed.email = 'cumplimiento@hotelpipo.com';
+          updated = true;
+        }
         if (updated) {
           try {
             localStorage.setItem(STORAGE_KEY_COMPANY, JSON.stringify(parsed));

@@ -91,7 +91,7 @@ export const CircularMinturSheet: React.FC<Props> = ({ company }) => {
 
         <div className="mt-4 font-sans text-xs">
           <p className="mb-1">Enviar información a los correos:</p>
-          <p className="font-bold text-blue-900">{company.email || 'cumplimiento@hotelpipointernacional.com'}</p>
+          <p className="font-bold text-blue-900">{company.email || 'cumplimiento@hotelpipo.com'}</p>
         </div>
 
         <div className="mt-8 font-sans">
