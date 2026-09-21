@@ -4,6 +4,11 @@ import { FormType, StoredRecord, SupabaseConfig } from '../types';
 const STORAGE_KEY_SUPABASE = 'hesperia_supabase_config_v1';
 const STORAGE_KEY_RECORDS = 'hesperia_local_records_v1';
 
+// Credenciales por defecto (puedes editarlas aquí directamente o usar variables de entorno .env)
+const DEFAULT_SUPABASE_URL = (import.meta as any).env?.VITE_SUPABASE_URL || '';
+const DEFAULT_SUPABASE_ANON_KEY = (import.meta as any).env?.VITE_SUPABASE_ANON_KEY || '';
+const DEFAULT_TABLE_NAME = (import.meta as any).env?.VITE_SUPABASE_TABLE_NAME || 'registros_cumplimiento';
+
 let cachedClient: SupabaseClient | null = null;
 let currentConfig: SupabaseConfig = getStoredSupabaseConfig();
 
@@ -11,17 +16,31 @@ export function getStoredSupabaseConfig(): SupabaseConfig {
   try {
     const saved = localStorage.getItem(STORAGE_KEY_SUPABASE);
     if (saved) {
-      return JSON.parse(saved);
+      const parsed = JSON.parse(saved);
+      const url = parsed.url || DEFAULT_SUPABASE_URL;
+      const anonKey = parsed.anonKey || DEFAULT_SUPABASE_ANON_KEY;
+      const tableName = parsed.tableName || DEFAULT_TABLE_NAME;
+      const hasCreds = Boolean(url && anonKey);
+
+      return {
+        url,
+        anonKey,
+        tableName,
+        isConnected: parsed.isConnected !== undefined ? parsed.isConnected : hasCreds,
+        isDemoMode: parsed.isDemoMode !== undefined ? parsed.isDemoMode : !hasCreds
+      };
     }
   } catch (e) {
     console.error('Error reading Supabase config', e);
   }
+
+  const hasDefaultCreds = Boolean(DEFAULT_SUPABASE_URL && DEFAULT_SUPABASE_ANON_KEY);
   return {
-    url: '',
-    anonKey: '',
-    tableName: 'registros_cumplimiento',
-    isConnected: false,
-    isDemoMode: true
+    url: DEFAULT_SUPABASE_URL,
+    anonKey: DEFAULT_SUPABASE_ANON_KEY,
+    tableName: DEFAULT_TABLE_NAME,
+    isConnected: hasDefaultCreds,
+    isDemoMode: !hasDefaultCreds
   };
 }
 
