@@ -37,9 +37,11 @@ export const SheetHeader: React.FC<SheetHeaderProps> = ({
                 />
               ) : (
                 <div className="flex items-center space-x-1 border border-black px-2 py-1 mb-0.5">
-                  <div className="font-serif font-black text-xl tracking-tighter text-blue-900 leading-none">H</div>
+                  <div className="font-serif font-black text-xl tracking-tighter text-blue-900 leading-none">
+                    {(company.commercialName || company.name || 'P')[0]?.toUpperCase()}
+                  </div>
                   <div className="text-[7.5px] font-bold tracking-widest text-gray-800 leading-tight">
-                    {company.commercialName || 'HESPERIA'}
+                    {company.commercialName || company.name || 'HOTEL PIPO INTERNACIONAL'}
                   </div>
                 </div>
               )}

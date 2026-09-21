@@ -20,7 +20,9 @@ import {
   getStoredSupabaseConfig, 
   saveSupabaseConfig, 
   saveRecord, 
-  getSupabaseClient 
+  getSupabaseClient,
+  fetchCompanyConfigFromSupabase,
+  saveCompanyConfigToSupabase
 } from './services/supabaseClient';
 
 // Sheet Views
@@ -62,7 +64,8 @@ import {
   Globe
 } from 'lucide-react';
 
-const STORAGE_KEY_COMPANY = 'hesperia_company_config_v1';
+const STORAGE_KEY_COMPANY = 'pipo_company_config_v2';
+const LEGACY_STORAGE_KEY_COMPANY = 'hesperia_company_config_v1';
 
 export default function App() {
   // Navigation
@@ -72,7 +75,7 @@ export default function App() {
   // Company and Supabase state
   const [company, setCompany] = useState<CompanyConfig>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY_COMPANY);
+      const saved = localStorage.getItem(STORAGE_KEY_COMPANY) || localStorage.getItem(LEGACY_STORAGE_KEY_COMPANY);
       return saved ? JSON.parse(saved) : DEFAULT_COMPANY;
     } catch {
       return DEFAULT_COMPANY;
@@ -111,14 +114,35 @@ export default function App() {
     setTimeout(() => setToast(null), 4000);
   };
 
-  const handleSaveCompany = (updated: CompanyConfig) => {
+  // Sincronizar automáticamente la configuración de la empresa desde Supabase si está disponible
+  useEffect(() => {
+    fetchCompanyConfigFromSupabase().then(remoteCompany => {
+      if (remoteCompany && remoteCompany.name) {
+        setCompany(remoteCompany);
+        try {
+          localStorage.setItem(STORAGE_KEY_COMPANY, JSON.stringify(remoteCompany));
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    });
+  }, [supabaseConfig.isConnected, supabaseConfig.url]);
+
+  const handleSaveCompany = async (updated: CompanyConfig) => {
     setCompany(updated);
     try {
       localStorage.setItem(STORAGE_KEY_COMPANY, JSON.stringify(updated));
     } catch (e) {
       console.error(e);
     }
-    showToast('Datos y logotipo de empresa actualizados.');
+
+    // Persistir en Supabase para que todos los usuarios y clientes vean la empresa actualizada
+    const synced = await saveCompanyConfigToSupabase(updated);
+    if (synced) {
+      showToast('Empresa guardada en Supabase y visible para todos los usuarios.');
+    } else {
+      showToast('Datos y logotipo de empresa actualizados.');
+    }
   };
 
   const handleSaveSupabaseConfig = (updated: SupabaseConfig) => {
@@ -288,13 +312,13 @@ export default function App() {
               {company.logoUrl ? (
                 <img src={company.logoUrl} alt={company.name} className="w-full h-full object-contain p-0.5 bg-white" />
               ) : (
-                'H'
+                (company.commercialName || company.name || 'P')[0]?.toUpperCase()
               )}
             </div>
             <div>
               <div className="flex items-center space-x-2">
                 <h1 className="font-extrabold text-sm sm:text-base text-gray-950 leading-tight">
-                  {company.commercialName || 'HOTEL HESPERIA MARACAY'}
+                  {company.commercialName || 'HOTEL PIPO INTERNACIONAL'}
                 </h1>
                 <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 border border-blue-200">
                   KYC / LC-FT-FPADM

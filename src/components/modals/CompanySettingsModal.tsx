@@ -49,7 +49,7 @@ export const CompanySettingsModal: React.FC<Props> = ({
             </div>
             <div>
               <h2 className="text-base font-bold text-gray-900">Personalizar Empresa y Membrete</h2>
-              <p className="text-xs text-gray-500">Configura el logo, razón social, RIF y membretes de todos los formularios</p>
+              <p className="text-xs text-gray-500">Configura el logo, razón social, RIF y membretes (se sincroniza con Supabase para todos los visitantes)</p>
             </div>
           </div>
           <button 
@@ -105,7 +105,7 @@ export const CompanySettingsModal: React.FC<Props> = ({
                 value={formData.commercialName}
                 onChange={e => setFormData({ ...formData, commercialName: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
-                placeholder="Ej. HOTEL HESPERIA MARACAY"
+                placeholder="Ej. HOTEL PIPO INTERNACIONAL"
                 required
               />
             </div>
@@ -117,7 +117,7 @@ export const CompanySettingsModal: React.FC<Props> = ({
                 value={formData.name}
                 onChange={e => setFormData({ ...formData, name: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
-                placeholder="Ej. BYBLOS DE VENEZUELA C.A."
+                placeholder="Ej. HOTEL PIPO INTERNACIONAL C.A."
                 required
               />
             </div>
@@ -129,7 +129,7 @@ export const CompanySettingsModal: React.FC<Props> = ({
                 value={formData.rif}
                 onChange={e => setFormData({ ...formData, rif: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-hidden font-mono"
-                placeholder="Ej. J-07521462-5"
+                placeholder="Ej. J-07513364-1"
                 required
               />
             </div>
@@ -141,7 +141,7 @@ export const CompanySettingsModal: React.FC<Props> = ({
                 value={formData.phones}
                 onChange={e => setFormData({ ...formData, phones: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
-                placeholder="Ej. 0243 – 4321300 / 0414 – 492 38 76"
+                placeholder="Ej. 0243-2413111 / 0243-2411990"
               />
             </div>
 
@@ -152,7 +152,7 @@ export const CompanySettingsModal: React.FC<Props> = ({
                 value={formData.address}
                 onChange={e => setFormData({ ...formData, address: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
-                placeholder="Ej. Final Av. Las Delicias Sector el Toro / Maracay Edo. Aragua"
+                placeholder="Ej. Av. Principal El Castaño / Maracay Edo. Aragua"
               />
             </div>
 
@@ -163,7 +163,7 @@ export const CompanySettingsModal: React.FC<Props> = ({
                 value={formData.email}
                 onChange={e => setFormData({ ...formData, email: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
-                placeholder="cumplimiento@hesperiamaracay.com"
+                placeholder="cumplimiento@hotelpipointernacional.com"
               />
             </div>
 
@@ -174,7 +174,7 @@ export const CompanySettingsModal: React.FC<Props> = ({
                 value={formData.website}
                 onChange={e => setFormData({ ...formData, website: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
-                placeholder="HOTELESHESPERIA.COM.VE"
+                placeholder="WWW.HOTELPIPOINTERNACIONAL.COM"
               />
             </div>
 

@@ -1,25 +1,45 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { FormType, StoredRecord, SupabaseConfig } from '../types';
+import { CompanyConfig, FormType, StoredRecord, SupabaseConfig } from '../types';
 
-const STORAGE_KEY_SUPABASE = 'hesperia_supabase_config_v1';
-const STORAGE_KEY_RECORDS = 'hesperia_local_records_v1';
+const STORAGE_KEY_SUPABASE = 'pipo_compliance_supabase_config_v1';
+const LEGACY_STORAGE_KEY_SUPABASE = 'hesperia_supabase_config_v1';
+const STORAGE_KEY_RECORDS = 'pipo_compliance_local_records_v1';
+const LEGACY_STORAGE_KEY_RECORDS = 'hesperia_local_records_v1';
+
+// Función para limpiar y normalizar la URL de Supabase eliminando rutas extras como /rest/v1 o barras al final
+export function cleanSupabaseUrl(rawUrl: string): string {
+  if (!rawUrl) return '';
+  let cleaned = rawUrl.trim();
+  try {
+    const parsed = new URL(cleaned);
+    // Para dominios de supabase.co, la URL base del proyecto es únicamente el origen (https://xxx.supabase.co)
+    if (parsed.hostname.endsWith('supabase.co')) {
+      return parsed.origin;
+    }
+    cleaned = cleaned.replace(/\/rest\/v1\/?$/i, '').replace(/\/+$/, '');
+    return cleaned;
+  } catch {
+    cleaned = cleaned.replace(/\/rest\/v1\/?$/i, '').replace(/\/+$/, '');
+    return cleaned;
+  }
+}
 
 // Credenciales por defecto (puedes editarlas aquí directamente o usar variables de entorno .env)
-const DEFAULT_SUPABASE_URL = (import.meta as any).env?.VITE_SUPABASE_URL || '';
-const DEFAULT_SUPABASE_ANON_KEY = (import.meta as any).env?.VITE_SUPABASE_ANON_KEY || '';
-const DEFAULT_TABLE_NAME = (import.meta as any).env?.VITE_SUPABASE_TABLE_NAME || 'registros_cumplimiento';
+const DEFAULT_SUPABASE_URL = cleanSupabaseUrl((import.meta as any).env?.VITE_SUPABASE_URL || '');
+const DEFAULT_SUPABASE_ANON_KEY = ((import.meta as any).env?.VITE_SUPABASE_ANON_KEY || '').trim();
+const DEFAULT_TABLE_NAME = ((import.meta as any).env?.VITE_SUPABASE_TABLE_NAME || 'registros_cumplimiento').trim();
 
 let cachedClient: SupabaseClient | null = null;
 let currentConfig: SupabaseConfig = getStoredSupabaseConfig();
 
 export function getStoredSupabaseConfig(): SupabaseConfig {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY_SUPABASE);
+    const saved = localStorage.getItem(STORAGE_KEY_SUPABASE) || localStorage.getItem(LEGACY_STORAGE_KEY_SUPABASE);
     if (saved) {
       const parsed = JSON.parse(saved);
-      const url = parsed.url || DEFAULT_SUPABASE_URL;
-      const anonKey = parsed.anonKey || DEFAULT_SUPABASE_ANON_KEY;
-      const tableName = parsed.tableName || DEFAULT_TABLE_NAME;
+      const url = cleanSupabaseUrl(parsed.url || DEFAULT_SUPABASE_URL);
+      const anonKey = (parsed.anonKey || DEFAULT_SUPABASE_ANON_KEY).trim();
+      const tableName = (parsed.tableName || DEFAULT_TABLE_NAME).trim();
       const hasCreds = Boolean(url && anonKey);
 
       return {
@@ -45,7 +65,12 @@ export function getStoredSupabaseConfig(): SupabaseConfig {
 }
 
 export function saveSupabaseConfig(config: SupabaseConfig): void {
-  currentConfig = { ...config };
+  currentConfig = {
+    ...config,
+    url: cleanSupabaseUrl(config.url),
+    anonKey: config.anonKey.trim(),
+    tableName: (config.tableName || 'registros_cumplimiento').trim()
+  };
   cachedClient = null;
   try {
     localStorage.setItem(STORAGE_KEY_SUPABASE, JSON.stringify(currentConfig));
@@ -56,10 +81,12 @@ export function saveSupabaseConfig(config: SupabaseConfig): void {
 
 export function getSupabaseClient(): SupabaseClient | null {
   if (cachedClient) return cachedClient;
-  if (!currentConfig.url || !currentConfig.anonKey) return null;
+  const sanitizedUrl = cleanSupabaseUrl(currentConfig.url);
+  const sanitizedKey = currentConfig.anonKey.trim();
+  if (!sanitizedUrl || !sanitizedKey) return null;
 
   try {
-    cachedClient = createClient(currentConfig.url.trim(), currentConfig.anonKey.trim(), {
+    cachedClient = createClient(sanitizedUrl, sanitizedKey, {
       auth: { persistSession: true, autoRefreshToken: true }
     });
     return cachedClient;
@@ -70,14 +97,18 @@ export function getSupabaseClient(): SupabaseClient | null {
 }
 
 export async function testSupabaseConnection(url: string, anonKey: string, tableName = 'registros_cumplimiento'): Promise<{ success: boolean; message: string }> {
-  if (!url || !anonKey) {
+  const sanitizedUrl = cleanSupabaseUrl(url);
+  const sanitizedKey = anonKey.trim();
+  const sanitizedTable = (tableName || 'registros_cumplimiento').trim();
+
+  if (!sanitizedUrl || !sanitizedKey) {
     return { success: false, message: 'La URL y la Anon Key son requeridas.' };
   }
 
   try {
-    const client = createClient(url.trim(), anonKey.trim());
+    const client = createClient(sanitizedUrl, sanitizedKey);
     // Try a simple select with limit 0 to check credentials & table access
-    const { error } = await client.from(tableName).select('id').limit(1);
+    const { error } = await client.from(sanitizedTable).select('id').limit(1);
     
     if (error) {
       if (error.code === '42P01' || error.message?.includes('does not exist')) {
@@ -174,7 +205,7 @@ export async function saveRecord(
 }
 
 export async function fetchAllRecords(formType?: FormType): Promise<StoredRecord[]> {
-  let records: StoredRecord[] = getFromLocalStorage();
+  let records: StoredRecord[] = getFromLocalStorage().filter(r => (r.form_type as string) !== 'COMPANY_CONFIG');
 
   const client = getSupabaseClient();
   if (client && !currentConfig.isDemoMode) {
@@ -182,21 +213,25 @@ export async function fetchAllRecords(formType?: FormType): Promise<StoredRecord
       let query = client.from(currentConfig.tableName || 'registros_cumplimiento').select('*').order('created_at', { ascending: false });
       if (formType) {
         query = query.eq('form_type', formType);
+      } else {
+        query = query.neq('form_type', 'COMPANY_CONFIG');
       }
       const { data, error } = await query;
       if (!error && data) {
-        const supabaseRecords: StoredRecord[] = data.map((d: any) => ({
-          id: d.id,
-          form_type: d.form_type,
-          title: d.title,
-          client_or_provider_name: d.client_or_provider_name,
-          identification: d.identification,
-          created_at: d.created_at,
-          updated_at: d.updated_at,
-          payload: d.payload,
-          company_name: d.company_name,
-          synced_to_supabase: true
-        }));
+        const supabaseRecords: StoredRecord[] = data
+          .filter((d: any) => d.form_type !== 'COMPANY_CONFIG' && d.id !== 'config_global_company')
+          .map((d: any) => ({
+            id: d.id,
+            form_type: d.form_type,
+            title: d.title,
+            client_or_provider_name: d.client_or_provider_name,
+            identification: d.identification,
+            created_at: d.created_at,
+            updated_at: d.updated_at,
+            payload: d.payload,
+            company_name: d.company_name,
+            synced_to_supabase: true
+          }));
 
         // Merge with local records
         const map = new Map<string, StoredRecord>();
@@ -233,10 +268,53 @@ export async function deleteRecord(id: string): Promise<boolean> {
   return true;
 }
 
+export async function saveCompanyConfigToSupabase(company: CompanyConfig): Promise<boolean> {
+  const client = getSupabaseClient();
+  if (!client || currentConfig.isDemoMode) return false;
+  try {
+    const { error } = await client
+      .from(currentConfig.tableName || 'registros_cumplimiento')
+      .upsert({
+        id: 'config_global_company',
+        form_type: 'COMPANY_CONFIG',
+        title: 'Configuración Global de Empresa',
+        client_or_provider_name: company.name || company.commercialName || 'Empresa',
+        identification: company.rif || '',
+        payload: company,
+        company_name: company.commercialName || company.name || '',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      });
+    return !error;
+  } catch (e) {
+    console.error('Error saving company config to Supabase:', e);
+    return false;
+  }
+}
+
+export async function fetchCompanyConfigFromSupabase(): Promise<CompanyConfig | null> {
+  const client = getSupabaseClient();
+  if (!client || currentConfig.isDemoMode) return null;
+  try {
+    const { data, error } = await client
+      .from(currentConfig.tableName || 'registros_cumplimiento')
+      .select('payload')
+      .eq('id', 'config_global_company')
+      .single();
+    if (!error && data?.payload) {
+      return data.payload as CompanyConfig;
+    }
+    return null;
+  } catch (e) {
+    console.warn('Could not load company config from Supabase:', e);
+    return null;
+  }
+}
+
 // Local Storage helpers
 function getFromLocalStorage(): StoredRecord[] {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY_RECORDS);
+    const raw = localStorage.getItem(STORAGE_KEY_RECORDS) || localStorage.getItem(LEGACY_STORAGE_KEY_RECORDS);
     return raw ? JSON.parse(raw) : [];
   } catch {
     return [];

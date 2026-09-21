@@ -11,7 +11,7 @@ import {
   Code2,
   PlugZap
 } from 'lucide-react';
-import { generateSupabaseSQL, testSupabaseConnection } from '../../services/supabaseClient';
+import { generateSupabaseSQL, testSupabaseConnection, cleanSupabaseUrl } from '../../services/supabaseClient';
 
 interface Props {
   isOpen: boolean;
@@ -39,11 +39,17 @@ export const SupabaseSettingsModal: React.FC<Props> = ({
   const handleTest = async () => {
     setTesting(true);
     setTestResult(null);
+    const cleanedUrl = cleanSupabaseUrl(formData.url);
+    const cleanedKey = formData.anonKey.trim();
+    if (cleanedUrl !== formData.url || cleanedKey !== formData.anonKey) {
+      setFormData(prev => ({ ...prev, url: cleanedUrl, anonKey: cleanedKey }));
+    }
+
     try {
-      const res = await testSupabaseConnection(formData.url, formData.anonKey, formData.tableName);
+      const res = await testSupabaseConnection(cleanedUrl, cleanedKey, formData.tableName);
       setTestResult(res);
       if (res.success) {
-        setFormData(prev => ({ ...prev, isConnected: true, isDemoMode: false }));
+        setFormData(prev => ({ ...prev, url: cleanedUrl, anonKey: cleanedKey, isConnected: true, isDemoMode: false }));
       }
     } finally {
       setTesting(false);
@@ -58,10 +64,14 @@ export const SupabaseSettingsModal: React.FC<Props> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const cleanedUrl = cleanSupabaseUrl(formData.url);
+    const cleanedKey = formData.anonKey.trim();
     onSave({
       ...formData,
-      isConnected: formData.url && formData.anonKey ? true : false,
-      isDemoMode: !formData.url || !formData.anonKey
+      url: cleanedUrl,
+      anonKey: cleanedKey,
+      isConnected: cleanedUrl && cleanedKey ? true : false,
+      isDemoMode: !cleanedUrl || !cleanedKey
     });
     onClose();
   };
@@ -115,17 +125,18 @@ export const SupabaseSettingsModal: React.FC<Props> = ({
 
           <div>
             <label className="block font-semibold text-gray-700 mb-1">
-              Project URL de Supabase (API URL)
+              Project URL de Supabase (Project URL)
             </label>
             <input 
               type="url"
               value={formData.url}
               onChange={e => setFormData({ ...formData, url: e.target.value })}
+              onBlur={() => setFormData(prev => ({ ...prev, url: cleanSupabaseUrl(prev.url) }))}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-hidden font-mono text-[11px]"
-              placeholder="https://xyzabcdefghijklmnop.supabase.co"
+              placeholder="https://dvolmksjjegflkzztvjq.supabase.co"
             />
             <span className="text-[10px] text-gray-500 mt-1 block">
-              Disponible en tu panel de Supabase &rarr; Project Settings &rarr; API &rarr; Project URL
+              Copia el <strong>Project URL</strong> exacto (ej. <code>https://tu-id.supabase.co</code>). <em>Nota: no agregues <code>/rest/v1/</code> al final.</em>
             </span>
           </div>
 

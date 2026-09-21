@@ -6,19 +6,20 @@ import {
   ClienteNaturalData 
 } from '../types';
 
+const env = (import.meta as any).env || {};
+
 export const DEFAULT_COMPANY: CompanyConfig = {
-  name: 'BYBLOS DE VENEZUELA C.A.',
-  commercialName: 'HOTEL HESPERIA MARACAY',
-  rif: 'J-07521462-5',
-  address: 'Final Av. Las Delicias Sector el Toro / Maracay Edo. Aragua',
-  phones: '0243 – 4321300 / 0414 – 492 38 76',
-  email: 'cumplimiento@hesperiamaracay.com',
-  website: 'HOTELESHESPERIA.COM.VE',
-  // High-contrast clean stylized H logo matching the PDF header
-  logoUrl: '',
-  defaultDeptResp: 'Departamento Responsable / Administración',
-  defaultOfficer: 'Oficial de Cumplimiento',
-  primaryColor: '#0056b3'
+  name: env.VITE_COMPANY_NAME || 'HOTEL PIPO INTERNACIONAL C.A.',
+  commercialName: env.VITE_COMPANY_COMMERCIAL_NAME || 'HOTEL PIPO INTERNACIONAL',
+  rif: env.VITE_COMPANY_RIF || 'J-07513364-1',
+  address: env.VITE_COMPANY_ADDRESS || 'Av. Principal El Castaño / Maracay, Edo. Aragua',
+  phones: env.VITE_COMPANY_PHONES || '0243-2413111 / 0243-2411990',
+  email: env.VITE_COMPANY_EMAIL || 'cumplimiento@hotelpipointernacional.com',
+  website: env.VITE_COMPANY_WEBSITE || 'WWW.HOTELPIPOINTERNACIONAL.COM',
+  logoUrl: env.VITE_COMPANY_LOGO_URL || '',
+  defaultDeptResp: env.VITE_COMPANY_DEPT || 'Departamento Responsable / Administración',
+  defaultOfficer: env.VITE_COMPANY_OFFICER || 'Oficial de Cumplimiento',
+  primaryColor: env.VITE_COMPANY_PRIMARY_COLOR || '#0f3a6e'
 };
 
 const today = new Date();

@@ -29,9 +29,9 @@ export function generateStandaloneHtmlCode(): string {
   <header class="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm no-print">
     <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center space-x-3">
-        <div class="bg-blue-600 text-white font-bold px-3 py-1.5 rounded text-lg tracking-wider" id="headerLogoText">H</div>
+        <div class="bg-blue-600 text-white font-bold px-3 py-1.5 rounded text-lg tracking-wider" id="headerLogoText">P</div>
         <div>
-          <h1 class="text-base font-bold text-gray-900 leading-tight" id="headerCompanyName">HOTEL HESPERIA MARACAY</h1>
+          <h1 class="text-base font-bold text-gray-900 leading-tight" id="headerCompanyName">HOTEL PIPO INTERNACIONAL</h1>
           <p class="text-xs text-gray-500">Sistema de Cumplimiento & Prevención LC/FT/FPADM (Res. 020-2021)</p>
         </div>
       </div>
@@ -102,13 +102,13 @@ export function generateStandaloneHtmlCode(): string {
   <script>
     // Configuración inicial de la Empresa
     const company = {
-      name: 'BYBLOS DE VENEZUELA C.A.',
-      commercialName: 'HOTEL HESPERIA MARACAY',
-      rif: 'J-07521462-5',
-      address: 'Final Av. Las Delicias Sector el Toro / Maracay Edo. Aragua',
-      phones: '0243 – 4321300 / 0414 – 492 38 76',
-      email: 'cumplimiento@hesperiamaracay.com',
-      website: 'HOTELESHESPERIA.COM.VE',
+      name: 'HOTEL PIPO INTERNACIONAL C.A.',
+      commercialName: 'HOTEL PIPO INTERNACIONAL',
+      rif: 'J-07513364-1',
+      address: 'Av. Principal El Castaño / Maracay Edo. Aragua',
+      phones: '0243-2413111 / 0243-2411990',
+      email: 'cumplimiento@hotelpipointernacional.com',
+      website: 'WWW.HOTELPIPOINTERNACIONAL.COM',
       logoUrl: ''
     };
 

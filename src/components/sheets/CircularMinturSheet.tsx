@@ -19,10 +19,12 @@ export const CircularMinturSheet: React.FC<Props> = ({ company }) => {
             <img src={company.logoUrl} alt={company.name} className="h-12 object-contain" />
           ) : (
             <div className="flex items-center space-x-2">
-              <span className="font-serif font-black text-3xl tracking-tighter text-blue-950 border-r-2 border-blue-950 pr-2">H</span>
+              <span className="font-serif font-black text-3xl tracking-tighter text-blue-950 border-r-2 border-blue-950 pr-2">
+                {(company.commercialName || company.name || 'P')[0]?.toUpperCase()}
+              </span>
               <div className="text-left font-sans">
                 <div className="font-bold text-sm tracking-widest text-gray-900 leading-none">
-                  {company.commercialName || 'HESPERIA MARACAY'}
+                  {company.commercialName || company.name || 'HOTEL PIPO INTERNACIONAL'}
                 </div>
               </div>
             </div>
@@ -89,20 +91,19 @@ export const CircularMinturSheet: React.FC<Props> = ({ company }) => {
 
         <div className="mt-4 font-sans text-xs">
           <p className="mb-1">Enviar información a los correos:</p>
-          <p className="font-bold text-blue-900">{company.email || 'cumplimiento@hesperiamaracay.com'}</p>
+          <p className="font-bold text-blue-900">{company.email || 'cumplimiento@hotelpipointernacional.com'}</p>
         </div>
 
         <div className="mt-8 font-sans">
           <p className="mb-4">Atentamente;</p>
-          <div className="text-xs text-gray-500 italic">AS/as</div>
+          <div className="text-xs text-gray-500 italic">Departamento de Cumplimiento / Administración</div>
         </div>
       </div>
 
       {/* Footer Membrete */}
       <div className="border-t border-gray-400 pt-4 mt-8 font-sans text-center">
-        <div className="italic text-gray-600 text-xs mb-0.5">Make it exceptional</div>
         <div className="font-bold tracking-widest text-[9px] text-gray-800 uppercase mb-1">
-          {company.website || 'HOTELESHESPERIA.COM.VE'}
+          {company.website || 'WWW.HOTELPIPOINTERNACIONAL.COM'}
         </div>
         <div className="text-[9px] text-gray-600">
           {company.address} — {company.phones}
