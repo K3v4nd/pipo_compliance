@@ -210,7 +210,7 @@ export const CompanySettingsModal: React.FC<Props> = ({
                 value={formData.website}
                 onChange={e => setFormData({ ...formData, website: e.target.value })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
-                placeholder="WWW.HOTELPIPOINTERNACIONAL.COM"
+                placeholder="WWW.HOTELPIPO.COM"
               />
             </div>
 

@@ -103,7 +103,7 @@ export const CircularMinturSheet: React.FC<Props> = ({ company }) => {
       {/* Footer Membrete */}
       <div className="border-t border-gray-400 pt-4 mt-8 font-sans text-center">
         <div className="font-bold tracking-widest text-[9px] text-gray-800 uppercase mb-1">
-          {company.website || 'WWW.HOTELPIPOINTERNACIONAL.COM'}
+          {company.website || 'WWW.HOTELPIPO.COM'}
         </div>
         <div className="text-[9px] text-gray-600">
           {company.address} — {company.phones}

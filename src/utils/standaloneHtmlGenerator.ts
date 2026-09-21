@@ -110,7 +110,7 @@ export function generateStandaloneHtmlCode(): string {
       address: 'Av. Principal El Castaño / Maracay Edo. Aragua',
       phones: '0243-2413111 / 0243-2411990',
       email: 'cumplimiento@hotelpipointernacional.com',
-      website: 'WWW.HOTELPIPOINTERNACIONAL.COM',
+      website: 'WWW.HOTELPIPO.COM',
       logoUrl: '${PIPO_DEFAULT_LOGO_SVG}'
     };
 

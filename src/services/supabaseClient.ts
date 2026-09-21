@@ -33,7 +33,7 @@ export function cleanSupabaseUrl(rawUrl: string): string {
 
 // Credenciales por defecto (con el proyecto configurado por el usuario)
 const DEFAULT_SUPABASE_URL = cleanSupabaseUrl((import.meta as any).env?.VITE_SUPABASE_URL || 'https://dvolmksjjegflkzztvjq.supabase.co');
-const DEFAULT_SUPABASE_ANON_KEY = ((import.meta as any).env?.VITE_SUPABASE_ANON_KEY || '').trim();
+const DEFAULT_SUPABASE_ANON_KEY = ((import.meta as any).env?.VITE_SUPABASE_ANON_KEY || 'sb_publishable_dyJFmYSOxbtncw77N03IrA_vXcp2x2M').trim();
 const DEFAULT_TABLE_NAME = ((import.meta as any).env?.VITE_SUPABASE_TABLE_NAME || 'registros_cumplimiento').trim();
 
 let cachedClient: SupabaseClient | null = null;
@@ -45,17 +45,28 @@ export function getStoredSupabaseConfig(): SupabaseConfig {
     if (saved) {
       const parsed = JSON.parse(saved);
       const url = cleanSupabaseUrl(parsed.url || DEFAULT_SUPABASE_URL);
-      const anonKey = (parsed.anonKey || DEFAULT_SUPABASE_ANON_KEY).trim();
+      // If previous config had empty anon key or old placeholder, auto-upgrade with user's official key
+      const anonKey = (parsed.anonKey && parsed.anonKey.trim().length > 0 && !parsed.anonKey.includes('tu_anon_key')
+        ? parsed.anonKey
+        : DEFAULT_SUPABASE_ANON_KEY).trim();
       const tableName = (parsed.tableName || DEFAULT_TABLE_NAME).trim();
       const hasCreds = Boolean(url && anonKey);
 
-      return {
+      const upgradedConfig: SupabaseConfig = {
         url,
         anonKey,
         tableName,
         isConnected: parsed.isConnected !== undefined ? parsed.isConnected : hasCreds,
         isDemoMode: parsed.isDemoMode !== undefined ? parsed.isDemoMode : !hasCreds
       };
+
+      if (!parsed.anonKey || parsed.anonKey !== anonKey) {
+        try {
+          localStorage.setItem(STORAGE_KEY_SUPABASE, JSON.stringify(upgradedConfig));
+        } catch {}
+      }
+
+      return upgradedConfig;
     }
   } catch (e) {
     console.error('Error reading Supabase config', e);

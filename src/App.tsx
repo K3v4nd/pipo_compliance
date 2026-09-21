@@ -94,9 +94,18 @@ export default function App() {
       const saved = localStorage.getItem(STORAGE_KEY_COMPANY);
       if (saved) {
         const parsed = JSON.parse(saved);
+        let updated = false;
         // Automatically upgrade if holding older placeholder or gold shield logo
         if (!parsed.logoUrl || parsed.logoUrl.includes('goldGrad') || parsed.logoUrl.includes('hesperia')) {
           parsed.logoUrl = PIPO_DEFAULT_LOGO_SVG;
+          updated = true;
+        }
+        // Automatically upgrade website to official www.hotelpipo.com
+        if (!parsed.website || parsed.website.includes('HOTELPIPOINTERNACIONAL') || parsed.website.includes('hesperia')) {
+          parsed.website = 'WWW.HOTELPIPO.COM';
+          updated = true;
+        }
+        if (updated) {
           try {
             localStorage.setItem(STORAGE_KEY_COMPANY, JSON.stringify(parsed));
           } catch {}
