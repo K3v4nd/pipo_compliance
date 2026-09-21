@@ -1,0 +1,6 @@
+{
+  "name": "Formularios de Registro y Cumplimiento",
+  "description": "Aplicación interactiva para captura, gestión en Supabase e impresión de planillas de registro (Proveedores y Clientes Naturales y Jurídicos) según normativa LC/FT/FPADM.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

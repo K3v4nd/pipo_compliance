@@ -1,0 +1,224 @@
+import React, { useState } from 'react';
+import { CompanyConfig } from '../../types';
+import { Building2, Upload, X, Check, RefreshCw, Image as ImageIcon } from 'lucide-react';
+
+interface Props {
+  isOpen: boolean;
+  onClose: () => void;
+  company: CompanyConfig;
+  onSave: (updated: CompanyConfig) => void;
+}
+
+export const CompanySettingsModal: React.FC<Props> = ({
+  isOpen,
+  onClose,
+  company,
+  onSave
+}) => {
+  const [formData, setFormData] = useState<CompanyConfig>({ ...company });
+
+  if (!isOpen) return null;
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === 'string') {
+          setFormData(prev => ({ ...prev, logoUrl: reader.result as string }));
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSave(formData);
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs">
+      <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-gray-200">
+        {/* Modal Header */}
+        <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between bg-slate-50">
+          <div className="flex items-center space-x-2.5">
+            <div className="p-2 bg-blue-100 text-blue-700 rounded-lg">
+              <Building2 className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-gray-900">Personalizar Empresa y Membrete</h2>
+              <p className="text-xs text-gray-500">Configura el logo, razón social, RIF y membretes de todos los formularios</p>
+            </div>
+          </div>
+          <button 
+            onClick={onClose}
+            className="text-gray-400 hover:text-gray-600 p-1 rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Modal Body Form */}
+        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-5 text-xs">
+          {/* Logo Section */}
+          <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <label className="block text-xs font-bold text-gray-800 mb-2">Logo de la Empresa</label>
+            <div className="flex items-center space-x-4">
+              <div className="w-24 h-16 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-white overflow-hidden p-1">
+                {formData.logoUrl ? (
+                  <img src={formData.logoUrl} alt="Logo preview" className="max-h-full max-w-full object-contain" />
+                ) : (
+                  <ImageIcon className="w-6 h-6 text-gray-400" />
+                )}
+              </div>
+              <div className="space-y-1.5 flex-1">
+                <label className="cursor-pointer inline-flex items-center space-x-2 px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-50 shadow-2xs">
+                  <Upload className="w-3.5 h-3.5" />
+                  <span>Subir imagen desde equipo (PNG, JPG, SVG)</span>
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    onChange={handleLogoUpload} 
+                    className="hidden" 
+                  />
+                </label>
+                {formData.logoUrl && (
+                  <button 
+                    type="button" 
+                    onClick={() => setFormData(prev => ({ ...prev, logoUrl: '' }))}
+                    className="block text-[11px] text-red-600 hover:underline"
+                  >
+                    Eliminar logo personalizado (usar logotipo estándar H)
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block font-semibold text-gray-700 mb-1">Nombre Comercial (Encabezado)</label>
+              <input 
+                type="text"
+                value={formData.commercialName}
+                onChange={e => setFormData({ ...formData, commercialName: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+                placeholder="Ej. HOTEL HESPERIA MARACAY"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block font-semibold text-gray-700 mb-1">Razón Social Legal</label>
+              <input 
+                type="text"
+                value={formData.name}
+                onChange={e => setFormData({ ...formData, name: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+                placeholder="Ej. BYBLOS DE VENEZUELA C.A."
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block font-semibold text-gray-700 mb-1">Registro de Información Fiscal (RIF)</label>
+              <input 
+                type="text"
+                value={formData.rif}
+                onChange={e => setFormData({ ...formData, rif: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-hidden font-mono"
+                placeholder="Ej. J-07521462-5"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block font-semibold text-gray-700 mb-1">Teléfonos de Contacto</label>
+              <input 
+                type="text"
+                value={formData.phones}
+                onChange={e => setFormData({ ...formData, phones: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+                placeholder="Ej. 0243 – 4321300 / 0414 – 492 38 76"
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block font-semibold text-gray-700 mb-1">Dirección Fiscal / Sede Principal</label>
+              <input 
+                type="text"
+                value={formData.address}
+                onChange={e => setFormData({ ...formData, address: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+                placeholder="Ej. Final Av. Las Delicias Sector el Toro / Maracay Edo. Aragua"
+              />
+            </div>
+
+            <div>
+              <label className="block font-semibold text-gray-700 mb-1">Correo Electrónico de Cumplimiento</label>
+              <input 
+                type="email"
+                value={formData.email}
+                onChange={e => setFormData({ ...formData, email: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+                placeholder="cumplimiento@hesperiamaracay.com"
+              />
+            </div>
+
+            <div>
+              <label className="block font-semibold text-gray-700 mb-1">Página Web o Portal</label>
+              <input 
+                type="text"
+                value={formData.website}
+                onChange={e => setFormData({ ...formData, website: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+                placeholder="HOTELESHESPERIA.COM.VE"
+              />
+            </div>
+
+            <div>
+              <label className="block font-semibold text-gray-700 mb-1">Título Departamento Responsable</label>
+              <input 
+                type="text"
+                value={formData.defaultDeptResp}
+                onChange={e => setFormData({ ...formData, defaultDeptResp: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+                placeholder="Departamento Responsable"
+              />
+            </div>
+
+            <div>
+              <label className="block font-semibold text-gray-700 mb-1">Título Oficial de Cumplimiento</label>
+              <input 
+                type="text"
+                value={formData.defaultOfficer}
+                onChange={e => setFormData({ ...formData, defaultOfficer: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-hidden"
+                placeholder="Oficial de Cumplimiento"
+              />
+            </div>
+          </div>
+
+          <div className="pt-4 border-t border-gray-200 flex items-center justify-end space-x-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              className="px-5 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-sm flex items-center space-x-1.5 transition-colors"
+            >
+              <Check className="w-4 h-4" />
+              <span>Guardar Cambios de Empresa</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
