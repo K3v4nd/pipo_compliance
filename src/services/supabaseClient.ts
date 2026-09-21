@@ -2,9 +2,16 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { CompanyConfig, FormType, StoredRecord, SupabaseConfig } from '../types';
 
 const STORAGE_KEY_SUPABASE = 'pipo_compliance_supabase_config_v1';
-const LEGACY_STORAGE_KEY_SUPABASE = 'hesperia_supabase_config_v1';
 const STORAGE_KEY_RECORDS = 'pipo_compliance_local_records_v1';
-const LEGACY_STORAGE_KEY_RECORDS = 'hesperia_local_records_v1';
+
+// Limpieza proactiva de claves antiguas que contenian datos de empresas anteriores
+try {
+  localStorage.removeItem('hesperia_company_config_v1');
+  localStorage.removeItem('hesperia_supabase_config_v1');
+  localStorage.removeItem('hesperia_local_records_v1');
+} catch {
+  // ignorar si no hay acceso a storage
+}
 
 // Función para limpiar y normalizar la URL de Supabase eliminando rutas extras como /rest/v1 o barras al final
 export function cleanSupabaseUrl(rawUrl: string): string {
@@ -24,8 +31,8 @@ export function cleanSupabaseUrl(rawUrl: string): string {
   }
 }
 
-// Credenciales por defecto (puedes editarlas aquí directamente o usar variables de entorno .env)
-const DEFAULT_SUPABASE_URL = cleanSupabaseUrl((import.meta as any).env?.VITE_SUPABASE_URL || '');
+// Credenciales por defecto (con el proyecto configurado por el usuario)
+const DEFAULT_SUPABASE_URL = cleanSupabaseUrl((import.meta as any).env?.VITE_SUPABASE_URL || 'https://dvolmksjjegflkzztvjq.supabase.co');
 const DEFAULT_SUPABASE_ANON_KEY = ((import.meta as any).env?.VITE_SUPABASE_ANON_KEY || '').trim();
 const DEFAULT_TABLE_NAME = ((import.meta as any).env?.VITE_SUPABASE_TABLE_NAME || 'registros_cumplimiento').trim();
 
@@ -34,7 +41,7 @@ let currentConfig: SupabaseConfig = getStoredSupabaseConfig();
 
 export function getStoredSupabaseConfig(): SupabaseConfig {
   try {
-    const saved = localStorage.getItem(STORAGE_KEY_SUPABASE) || localStorage.getItem(LEGACY_STORAGE_KEY_SUPABASE);
+    const saved = localStorage.getItem(STORAGE_KEY_SUPABASE);
     if (saved) {
       const parsed = JSON.parse(saved);
       const url = cleanSupabaseUrl(parsed.url || DEFAULT_SUPABASE_URL);
@@ -314,7 +321,7 @@ export async function fetchCompanyConfigFromSupabase(): Promise<CompanyConfig | 
 // Local Storage helpers
 function getFromLocalStorage(): StoredRecord[] {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY_RECORDS) || localStorage.getItem(LEGACY_STORAGE_KEY_RECORDS);
+    const raw = localStorage.getItem(STORAGE_KEY_RECORDS);
     return raw ? JSON.parse(raw) : [];
   } catch {
     return [];

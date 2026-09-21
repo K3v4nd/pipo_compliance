@@ -5,6 +5,7 @@ import {
   ClienteJuridicoData, 
   ClienteNaturalData 
 } from '../types';
+import { PIPO_DEFAULT_LOGO_SVG } from './pipoLogo';
 
 const env = (import.meta as any).env || {};
 
@@ -16,7 +17,7 @@ export const DEFAULT_COMPANY: CompanyConfig = {
   phones: env.VITE_COMPANY_PHONES || '0243-2413111 / 0243-2411990',
   email: env.VITE_COMPANY_EMAIL || 'cumplimiento@hotelpipointernacional.com',
   website: env.VITE_COMPANY_WEBSITE || 'WWW.HOTELPIPOINTERNACIONAL.COM',
-  logoUrl: env.VITE_COMPANY_LOGO_URL || '',
+  logoUrl: env.VITE_COMPANY_LOGO_URL || PIPO_DEFAULT_LOGO_SVG,
   defaultDeptResp: env.VITE_COMPANY_DEPT || 'Departamento Responsable / Administración',
   defaultOfficer: env.VITE_COMPANY_OFFICER || 'Oficial de Cumplimiento',
   primaryColor: env.VITE_COMPANY_PRIMARY_COLOR || '#0f3a6e'

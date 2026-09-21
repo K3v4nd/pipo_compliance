@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 120" width="420" height="120">
+  <defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d4af37"/>
+      <stop offset="50%" stop-color="#f9e295"/>
+      <stop offset="100%" stop-color="#b8860b"/>
+    </linearGradient>
+    <linearGradient id="navyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0c2340"/>
+      <stop offset="100%" stop-color="#1a365d"/>
+    </linearGradient>
+  </defs>
+  <!-- Shield Icon -->
+  <g transform="translate(10, 8)">
+    <path d="M50 5 L85 18 C85 65 50 88 50 98 C50 88 15 65 15 18 Z" fill="url(#navyGrad)" stroke="url(#goldGrad)" stroke-width="2.5" />
+    <path d="M50 11 L79 22 C79 61 50 81 50 90 C50 81 21 61 21 22 Z" fill="none" stroke="url(#goldGrad)" stroke-width="1" stroke-dasharray="3,2" opacity="0.8" />
+    <text x="50" y="62" font-family="'Times New Roman', Georgia, serif" font-size="44" font-weight="bold" fill="url(#goldGrad)" text-anchor="middle">P</text>
+    <path d="M50 3 L52 8 L57 8 L53 11 L54.5 16 L50 13 L45.5 16 L47 11 L43 8 L48 8 Z" fill="#f9e295" />
+    <path d="M36 7 L37.5 11 L41.5 11 L38.5 13.5 L39.5 17.5 L36 15 L32.5 17.5 L33.5 13.5 L30.5 11 L34.5 11 Z" fill="#d4af37" transform="scale(0.8) translate(10, 0)" />
+    <path d="M64 7 L65.5 11 L69.5 11 L66.5 13.5 L67.5 17.5 L64 15 L60.5 17.5 L61.5 13.5 L58.5 11 L62.5 11 Z" fill="#d4af37" transform="scale(0.8) translate(26, 0)" />
+  </g>
+  <!-- Brand Typography -->
+  <g transform="translate(115, 20)">
+    <!-- 5 Stars -->
+    <g fill="#b8860b" transform="translate(0, 0)">
+      <polygon points="10,1 12,6 18,6 13,9.5 15,15 10,11.5 5,15 7,9.5 2,6 8,6" />
+      <polygon points="26,1 28,6 34,6 29,9.5 31,15 26,11.5 21,15 23,9.5 18,6 24,6" />
+      <polygon points="42,1 44,6 50,6 45,9.5 47,15 42,11.5 37,15 39,9.5 34,6 40,6" />
+      <polygon points="58,1 60,6 66,6 61,9.5 63,15 58,11.5 53,15 55,9.5 50,6 56,6" />
+      <polygon points="74,1 76,6 82,6 77,9.5 79,15 74,11.5 69,15 71,9.5 66,6 72,6" />
+    </g>
+    <!-- HOTEL -->
+    <text x="0" y="32" font-family="'Times New Roman', Georgia, serif" font-size="14" font-weight="bold" fill="#64748b" letter-spacing="4">HOTEL</text>
+    <!-- PIPO -->
+    <text x="70" y="34" font-family="'Times New Roman', Georgia, serif" font-size="28" font-weight="900" fill="#0c2340" letter-spacing="3">PIPO</text>
+    <!-- INTERNACIONAL -->
+    <text x="1" y="55" font-family="'Times New Roman', Georgia, serif" font-size="17" font-weight="bold" fill="#b8860b" letter-spacing="4">INTERNACIONAL</text>
+    <!-- Divider bar -->
+    <line x1="1" y1="63" x2="280" y2="63" stroke="#cbd5e1" stroke-width="1" />
+    <!-- Subtitle -->
+    <text x="1" y="74" font-family="'Arial', sans-serif" font-size="8.5" font-weight="600" fill="#64748b" letter-spacing="2.5">MARACAY • VENEZUELA • RIF J-07513364-1</text>
+  </g>
+</svg>

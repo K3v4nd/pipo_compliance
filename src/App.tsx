@@ -61,21 +61,36 @@ import {
   Eye, 
   Edit3, 
   CheckCircle2, 
-  Globe
+  Globe,
+  Lock,
+  ShieldCheck,
+  LogOut,
+  Key
 } from 'lucide-react';
+import { AdminAuthModal } from './components/modals/AdminAuthModal';
 
 const STORAGE_KEY_COMPANY = 'pipo_company_config_v2';
-const LEGACY_STORAGE_KEY_COMPANY = 'hesperia_company_config_v1';
 
 export default function App() {
   // Navigation
   const [activeTab, setActiveTab] = useState<FormType>('PROV_NATURAL');
   const [mobileView, setMobileView] = useState<'editor' | 'preview'>('editor');
 
+  // Admin session state
+  const [isAdmin, setIsAdmin] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('pipo_admin_session') === 'true' || 
+             sessionStorage.getItem('pipo_admin_session') === 'true';
+    } catch {
+      return false;
+    }
+  });
+  const [adminModalOpen, setAdminModalOpen] = useState(false);
+
   // Company and Supabase state
   const [company, setCompany] = useState<CompanyConfig>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY_COMPANY) || localStorage.getItem(LEGACY_STORAGE_KEY_COMPANY);
+      const saved = localStorage.getItem(STORAGE_KEY_COMPANY);
       return saved ? JSON.parse(saved) : DEFAULT_COMPANY;
     } catch {
       return DEFAULT_COMPANY;
@@ -127,6 +142,16 @@ export default function App() {
       }
     });
   }, [supabaseConfig.isConnected, supabaseConfig.url]);
+
+  const handleAdminLogout = () => {
+    localStorage.removeItem('pipo_admin_session');
+    sessionStorage.removeItem('pipo_admin_session');
+    setIsAdmin(false);
+    setCompanyModalOpen(false);
+    setSupabaseModalOpen(false);
+    setSavedRecordsModalOpen(false);
+    showToast('Sesión de administrador cerrada.', 'info');
+  };
 
   const handleSaveCompany = async (updated: CompanyConfig) => {
     setCompany(updated);
@@ -332,54 +357,103 @@ export default function App() {
 
           {/* Action Toolbar */}
           <div className="flex items-center flex-wrap gap-2 text-xs">
-            <button
-              onClick={() => setCompanyModalOpen(true)}
-              className="px-2.5 py-1.5 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-medium flex items-center space-x-1.5 transition-colors"
-              title="Personalizar datos y logo de la empresa"
-            >
-              <Building className="w-3.5 h-3.5 text-blue-600" />
-              <span className="hidden sm:inline">Empresa / Logo</span>
-            </button>
+            {isAdmin ? (
+              <>
+                {/* Admin Status Pill */}
+                <div className="px-2.5 py-1 rounded-lg bg-amber-100 border border-amber-300 text-amber-900 font-bold flex items-center space-x-1.5 shadow-2xs">
+                  <ShieldCheck className="w-3.5 h-3.5 text-amber-700" />
+                  <span className="hidden md:inline">Panel Admin</span>
+                </div>
 
-            <button
-              onClick={() => setSupabaseModalOpen(true)}
-              className={`px-2.5 py-1.5 rounded-lg border font-medium flex items-center space-x-1.5 transition-colors ${
-                supabaseConfig.url && supabaseConfig.anonKey
-                  ? 'border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100'
-                  : 'border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100'
-              }`}
-              title="Configurar Supabase"
-            >
-              <Database className="w-3.5 h-3.5" />
-              <span>
-                Supabase {supabaseConfig.url && supabaseConfig.anonKey ? '(Conectado)' : '(Local)'}
-              </span>
-            </button>
+                {/* 1. Empresa / Logo */}
+                <button
+                  onClick={() => setCompanyModalOpen(true)}
+                  className="px-2.5 py-1.5 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-medium flex items-center space-x-1.5 transition-colors"
+                  title="Personalizar datos y logo de la empresa"
+                >
+                  <Building className="w-3.5 h-3.5 text-blue-600" />
+                  <span className="hidden sm:inline">Empresa / Logo</span>
+                </button>
 
-            <button
-              onClick={() => setSavedRecordsModalOpen(true)}
-              className="px-2.5 py-1.5 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-medium flex items-center space-x-1.5 transition-colors"
-            >
-              <FolderOpen className="w-3.5 h-3.5 text-indigo-600" />
-              <span className="hidden sm:inline">Expedientes</span>
-            </button>
+                {/* 2. Supabase */}
+                <button
+                  onClick={() => setSupabaseModalOpen(true)}
+                  className={`px-2.5 py-1.5 rounded-lg border font-medium flex items-center space-x-1.5 transition-colors ${
+                    supabaseConfig.url && supabaseConfig.anonKey
+                      ? 'border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100'
+                      : 'border-amber-300 bg-amber-50 text-amber-800 hover:bg-amber-100'
+                  }`}
+                  title="Configurar Supabase"
+                >
+                  <Database className="w-3.5 h-3.5" />
+                  <span>
+                    Supabase {supabaseConfig.url && supabaseConfig.anonKey ? '(Conectado)' : '(Local)'}
+                  </span>
+                </button>
 
-            <button
-              onClick={handleDownloadStandaloneHtml}
-              className="px-2.5 py-1.5 rounded-lg border border-purple-200 bg-purple-50 hover:bg-purple-100 text-purple-800 font-medium flex items-center space-x-1.5 transition-colors"
-              title="Descarga la aplicación en un solo archivo index.html para GitHub Pages o uso sin internet"
-            >
-              <Globe className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">Exportar GitHub Pages</span>
-            </button>
+                {/* 3. Expedientes */}
+                <button
+                  onClick={() => setSavedRecordsModalOpen(true)}
+                  className="px-2.5 py-1.5 rounded-lg border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-medium flex items-center space-x-1.5 transition-colors"
+                  title="Ver expedientes registrados por clientes"
+                >
+                  <FolderOpen className="w-3.5 h-3.5 text-indigo-600" />
+                  <span className="hidden sm:inline">Expedientes</span>
+                </button>
 
+                {/* 4. Exportar GitHub Pages */}
+                <button
+                  onClick={handleDownloadStandaloneHtml}
+                  className="px-2.5 py-1.5 rounded-lg border border-purple-200 bg-purple-50 hover:bg-purple-100 text-purple-800 font-medium flex items-center space-x-1.5 transition-colors"
+                  title="Descarga la aplicación en un solo archivo index.html para GitHub Pages o uso sin internet"
+                >
+                  <Globe className="w-3.5 h-3.5" />
+                  <span className="hidden lg:inline">Exportar GitHub Pages</span>
+                </button>
+
+                {/* Clave / Opciones */}
+                <button
+                  onClick={() => setAdminModalOpen(true)}
+                  className="px-2 py-1.5 rounded-lg border border-slate-300 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold flex items-center space-x-1 transition-colors"
+                  title="Opciones de seguridad y cambio de clave"
+                >
+                  <Key className="w-3.5 h-3.5 text-slate-600" />
+                  <span className="hidden sm:inline">Clave</span>
+                </button>
+
+                {/* Salir */}
+                <button
+                  onClick={handleAdminLogout}
+                  className="px-2 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 font-semibold flex items-center space-x-1 transition-colors"
+                  title="Cerrar sesión de administrador"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Salir</span>
+                </button>
+              </>
+            ) : (
+              <>
+                {/* Public View: Acceso Admin */}
+                <button
+                  onClick={() => setAdminModalOpen(true)}
+                  className="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-semibold flex items-center space-x-1.5 shadow-xs transition-colors"
+                  title="Acceso exclusivo para el Oficial de Cumplimiento y personal administrativo"
+                >
+                  <Lock className="w-3.5 h-3.5 text-amber-400" />
+                  <span>Acceso Admin</span>
+                </button>
+              </>
+            )}
+
+            {/* Imprimir is always available */}
             <button
               onClick={triggerBrowserPrint}
-              className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold flex items-center space-x-1.5 shadow-sm transition-colors"
+              className="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold flex items-center space-x-1.5 shadow-xs transition-colors"
               title="Imprimir o guardar en PDF mediante el cuadro de diálogo del navegador"
             >
               <Printer className="w-3.5 h-3.5" />
-              <span>Imprimir Hoja Carta</span>
+              <span className="hidden sm:inline">Imprimir Hoja Carta</span>
+              <span className="sm:hidden">Imprimir</span>
             </button>
           </div>
         </div>
@@ -645,6 +719,15 @@ export default function App() {
         title={signatureModal.title}
         isFingerprint={signatureModal.isFingerprint}
         onSaveSignature={handleSaveSignature}
+      />
+
+      <AdminAuthModal
+        isOpen={adminModalOpen}
+        onClose={() => setAdminModalOpen(false)}
+        isAdmin={isAdmin}
+        onLogin={() => setIsAdmin(true)}
+        onLogout={handleAdminLogout}
+        showToast={showToast}
       />
     </div>
   );

@@ -226,6 +226,36 @@ export const SupabaseSettingsModal: React.FC<Props> = ({
             )}
           </div>
 
+          {/* Vercel Global Sync Helper */}
+          <div className="p-3.5 bg-blue-50/80 border border-blue-200 rounded-lg text-xs space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="font-bold text-blue-900 flex items-center space-x-1.5">
+                <span>🌐 ¿Cómo conectar TODOS los dispositivos y clientes automáticamente?</span>
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  const envContent = `VITE_SUPABASE_URL=${cleanSupabaseUrl(formData.url)}\nVITE_SUPABASE_ANON_KEY=${formData.anonKey.trim()}\nVITE_SUPABASE_TABLE_NAME=${formData.tableName || 'registros_cumplimiento'}`;
+                  navigator.clipboard.writeText(envContent);
+                  alert('Variables copiadas al portapapeles. Pégalas en Vercel -> Settings -> Environment Variables');
+                }}
+                className="inline-flex items-center space-x-1 px-2.5 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-[11px] font-semibold transition-colors"
+              >
+                <Copy className="w-3 h-3" />
+                <span>Copiar Variables para Vercel</span>
+              </button>
+            </div>
+            <p className="text-[11px] text-blue-800 leading-relaxed">
+              Las claves guardadas en esta ventana quedan en <strong>este navegador</strong>. Para que cualquier cliente que abra el link <code className="bg-blue-100 px-1 py-0.5 rounded font-mono">pipo-compliance.vercel.app</code> desde su celular o PC se conecte a Supabase sin tener que configurar nada:
+            </p>
+            <ol className="list-decimal pl-4 space-y-0.5 text-[11px] text-blue-900 font-medium">
+              <li>Entra a tu cuenta en <strong>vercel.com</strong> &rarr; Abre el proyecto <strong>pipo-compliance</strong>.</li>
+              <li>Ve a <strong>Settings &rarr; Environment Variables</strong>.</li>
+              <li>Pega <code className="font-mono bg-blue-100 px-1">VITE_SUPABASE_URL</code> y <code className="font-mono bg-blue-100 px-1">VITE_SUPABASE_ANON_KEY</code>.</li>
+              <li>Haz clic en <strong>Redeploy</strong> en la pestaña Deployments.</li>
+            </ol>
+          </div>
+
           <div className="pt-3 border-t border-gray-200 flex items-center justify-between">
             <a 
               href="https://supabase.com" 
