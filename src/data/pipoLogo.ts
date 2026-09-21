@@ -1,49 +1,57 @@
-// High quality embedded SVG logo for Hotel Pipo Internacional
-// Can be used offline, across all devices, and renders perfectly in PDF exports
+// Logotipo Oficial del Hotel Pipo Internacional
+// Emblema oval azul marino con monograma geométrico oficial (c, H, P, i)
+// Proporciona fidelidad visual 100% idéntica al logo oficial, vectorizado para resolución infinita en móviles, pantallas y PDFs
 
-export const PIPO_DEFAULT_LOGO_SVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 120" width="420" height="120">
-  <defs>
-    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="%23d4af37"/>
-      <stop offset="50%" stop-color="%23f9e295"/>
-      <stop offset="100%" stop-color="%23b8860b"/>
-    </linearGradient>
-    <linearGradient id="navyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="%230c2340"/>
-      <stop offset="100%" stop-color="%231a365d"/>
-    </linearGradient>
-  </defs>
-  <!-- Shield Icon -->
-  <g transform="translate(10, 8)">
-    <!-- Outer Crest -->
-    <path d="M50 5 L85 18 C85 65 50 88 50 98 C50 88 15 65 15 18 Z" fill="url(%23navyGrad)" stroke="url(%23goldGrad)" stroke-width="2.5" />
-    <path d="M50 11 L79 22 C79 61 50 81 50 90 C50 81 21 61 21 22 Z" fill="none" stroke="url(%23goldGrad)" stroke-width="1" stroke-dasharray="3,2" opacity="0.8" />
-    <!-- Monogram P -->
-    <text x="50" y="62" font-family="'Times New Roman', Georgia, serif" font-size="44" font-weight="bold" fill="url(%23goldGrad)" text-anchor="middle">P</text>
-    <!-- Stars over shield -->
-    <path d="M50 3 L52 8 L57 8 L53 11 L54.5 16 L50 13 L45.5 16 L47 11 L43 8 L48 8 Z" fill="%23f9e295" />
-    <path d="M36 7 L37.5 11 L41.5 11 L38.5 13.5 L39.5 17.5 L36 15 L32.5 17.5 L33.5 13.5 L30.5 11 L34.5 11 Z" fill="%23d4af37" transform="scale(0.8) translate(10, 0)" />
-    <path d="M64 7 L65.5 11 L69.5 11 L66.5 13.5 L67.5 17.5 L64 15 L60.5 17.5 L61.5 13.5 L58.5 11 L62.5 11 Z" fill="%23d4af37" transform="scale(0.8) translate(26, 0)" />
+export const PIPO_DEFAULT_LOGO_SVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 190" width="320" height="190">
+  <!-- Borde exterior fino azul marino -->
+  <ellipse cx="160" cy="95" rx="155" ry="89" fill="none" stroke="%231c2a6d" stroke-width="2.8" />
+  <!-- Óvalo principal relleno azul marino oficial -->
+  <ellipse cx="160" cy="95" rx="148" ry="82" fill="%231c2a6d" />
+  
+  <!-- Monograma oficial inclinado en blanco -->
+  <g transform="translate(160, 95) skewX(-13) translate(-160, -95)" fill="%23ffffff">
+    <!-- Letra 'c' lateral izquierda -->
+    <path d="M 116,88 L 81,88 C 77,88 75,90 75,94 L 75,142 C 75,146 77,148 81,148 L 116,148 L 116,132 L 92,132 L 92,104 L 116,104 Z" />
+    
+    <!-- Asta vertical izquierda de la 'H' -->
+    <rect x="122" y="42" width="17" height="82" rx="1" />
+    <!-- Punto inferior izquierdo (base alineada con la 'c') -->
+    <rect x="122" y="132" width="17" height="16" rx="1" />
+    
+    <!-- Barra transversal central que une las astas de la 'H' -->
+    <rect x="139" y="88" width="42" height="16" />
+    
+    <!-- Punto superior derecho (corona de la 'i' / asta derecha) -->
+    <rect x="181" y="42" width="17" height="16" rx="1" />
+    <!-- Asta vertical derecha de la 'H' / base de la 'P' -->
+    <rect x="181" y="66" width="17" height="82" rx="1" />
+    
+    <!-- Bucle superior de la 'P' -->
+    <path d="M 197,66 L 228,66 C 238,66 244,72 244,81 L 244,89 C 244,98 238,104 228,104 L 197,104 Z M 198,80 L 224,80 C 227,80 228,81 228,84 L 228,86 C 228,89 227,90 224,90 L 198,90 Z" fill-rule="evenodd" />
   </g>
-  <!-- Brand Typography -->
-  <g transform="translate(115, 20)">
-    <!-- 5 Stars -->
-    <g fill="%23b8860b" transform="translate(0, 0)">
-      <polygon points="10,1 12,6 18,6 13,9.5 15,15 10,11.5 5,15 7,9.5 2,6 8,6" />
-      <polygon points="26,1 28,6 34,6 29,9.5 31,15 26,11.5 21,15 23,9.5 18,6 24,6" />
-      <polygon points="42,1 44,6 50,6 45,9.5 47,15 42,11.5 37,15 39,9.5 34,6 40,6" />
-      <polygon points="58,1 60,6 66,6 61,9.5 63,15 58,11.5 53,15 55,9.5 50,6 56,6" />
-      <polygon points="74,1 76,6 82,6 77,9.5 79,15 74,11.5 69,15 71,9.5 66,6 72,6" />
+</svg>`;
+
+export const PIPO_FULL_BANNER_LOGO_SVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 140" width="520" height="140">
+  <!-- Emblema oficial del Hotel Pipo Internacional a la izquierda -->
+  <g transform="translate(10, 5) scale(0.68)">
+    <ellipse cx="160" cy="95" rx="155" ry="89" fill="none" stroke="%231c2a6d" stroke-width="2.8" />
+    <ellipse cx="160" cy="95" rx="148" ry="82" fill="%231c2a6d" />
+    <g transform="translate(160, 95) skewX(-13) translate(-160, -95)" fill="%23ffffff">
+      <path d="M 116,88 L 81,88 C 77,88 75,90 75,94 L 75,142 C 75,146 77,148 81,148 L 116,148 L 116,132 L 92,132 L 92,104 L 116,104 Z" />
+      <rect x="122" y="42" width="17" height="82" rx="1" />
+      <rect x="122" y="132" width="17" height="16" rx="1" />
+      <rect x="139" y="88" width="42" height="16" />
+      <rect x="181" y="42" width="17" height="16" rx="1" />
+      <rect x="181" y="66" width="17" height="82" rx="1" />
+      <path d="M 197,66 L 228,66 C 238,66 244,72 244,81 L 244,89 C 244,98 238,104 228,104 L 197,104 Z M 198,80 L 224,80 C 227,80 228,81 228,84 L 228,86 C 228,89 227,90 224,90 L 198,90 Z" fill-rule="evenodd" />
     </g>
-    <!-- HOTEL -->
-    <text x="0" y="32" font-family="'Times New Roman', Georgia, serif" font-size="14" font-weight="bold" fill="%2364748b" letter-spacing="4">HOTEL</text>
-    <!-- PIPO -->
-    <text x="70" y="34" font-family="'Times New Roman', Georgia, serif" font-size="28" font-weight="900" fill="%230c2340" letter-spacing="3">PIPO</text>
-    <!-- INTERNACIONAL -->
-    <text x="1" y="55" font-family="'Times New Roman', Georgia, serif" font-size="17" font-weight="bold" fill="%23b8860b" letter-spacing="4">INTERNACIONAL</text>
-    <!-- Divider bar -->
-    <line x1="1" y1="63" x2="280" y2="63" stroke="%23cbd5e1" stroke-width="1" />
-    <!-- Subtitle -->
-    <text x="1" y="74" font-family="'Arial', sans-serif" font-size="8.5" font-weight="600" fill="%2364748b" letter-spacing="2.5">MARACAY • VENEZUELA • RIF J-07513364-1</text>
+  </g>
+  
+  <!-- Tipografía institucional a la derecha -->
+  <g transform="translate(240, 25)">
+    <text x="0" y="32" font-family="'Arial Black', Impact, sans-serif" font-size="25" font-weight="900" fill="%231c2a6d" letter-spacing="1">HOTEL PIPO</text>
+    <text x="0" y="58" font-family="'Arial', sans-serif" font-size="19" font-weight="800" fill="%231c2a6d" letter-spacing="2.5">INTERNACIONAL</text>
+    <line x1="0" y1="69" x2="265" y2="69" stroke="%23cbd5e1" stroke-width="1.5" />
+    <text x="0" y="83" font-family="'Arial', sans-serif" font-size="9.5" font-weight="700" fill="%2364748b" letter-spacing="1.2">MARACAY • VENEZUELA • RIF: J-07513364-1</text>
   </g>
 </svg>`;

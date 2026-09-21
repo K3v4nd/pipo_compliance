@@ -16,6 +16,7 @@ import {
   DEFAULT_CLIENTE_JURIDICO, 
   DEFAULT_CLIENTE_NATURAL 
 } from './data/defaults';
+import { PIPO_DEFAULT_LOGO_SVG } from './data/pipoLogo';
 import { 
   getStoredSupabaseConfig, 
   saveSupabaseConfig, 
@@ -91,7 +92,18 @@ export default function App() {
   const [company, setCompany] = useState<CompanyConfig>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY_COMPANY);
-      return saved ? JSON.parse(saved) : DEFAULT_COMPANY;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Automatically upgrade if holding older placeholder or gold shield logo
+        if (!parsed.logoUrl || parsed.logoUrl.includes('goldGrad') || parsed.logoUrl.includes('hesperia')) {
+          parsed.logoUrl = PIPO_DEFAULT_LOGO_SVG;
+          try {
+            localStorage.setItem(STORAGE_KEY_COMPANY, JSON.stringify(parsed));
+          } catch {}
+        }
+        return parsed;
+      }
+      return DEFAULT_COMPANY;
     } catch {
       return DEFAULT_COMPANY;
     }
@@ -333,11 +345,17 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3">
           {/* Logo & Company Branding */}
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-lg bg-blue-900 text-white flex items-center justify-center font-serif font-black text-xl shadow-xs shrink-0 overflow-hidden">
+            <div className="h-10 w-auto min-w-[48px] max-w-[85px] flex items-center justify-center shrink-0">
               {company.logoUrl ? (
-                <img src={company.logoUrl} alt={company.name} className="w-full h-full object-contain p-0.5 bg-white" />
+                <img 
+                  src={company.logoUrl} 
+                  alt={company.name} 
+                  className="h-10 w-auto max-w-[85px] object-contain drop-shadow-xs" 
+                />
               ) : (
-                (company.commercialName || company.name || 'P')[0]?.toUpperCase()
+                <div className="w-10 h-10 rounded-lg bg-blue-900 text-white flex items-center justify-center font-serif font-black text-xl shadow-xs">
+                  {(company.commercialName || company.name || 'P')[0]?.toUpperCase()}
+                </div>
               )}
             </div>
             <div>

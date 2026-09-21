@@ -1,3 +1,5 @@
+import { PIPO_DEFAULT_LOGO_SVG } from '../data/pipoLogo';
+
 /**
  * Generates a 100% self-contained single HTML file with embedded Tailwind CSS CDN,
  * Supabase JS SDK, html2pdf.js, and interactive form switcher ready for GitHub Pages or offline use.
@@ -29,7 +31,7 @@ export function generateStandaloneHtmlCode(): string {
   <header class="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm no-print">
     <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
       <div class="flex items-center space-x-3">
-        <div class="bg-blue-600 text-white font-bold px-3 py-1.5 rounded text-lg tracking-wider" id="headerLogoText">P</div>
+        <img src="${PIPO_DEFAULT_LOGO_SVG}" alt="Hotel Pipo Internacional" class="h-10 w-auto max-w-[80px] object-contain drop-shadow-xs" id="headerLogoImg" />
         <div>
           <h1 class="text-base font-bold text-gray-900 leading-tight" id="headerCompanyName">HOTEL PIPO INTERNACIONAL</h1>
           <p class="text-xs text-gray-500">Sistema de Cumplimiento & Prevención LC/FT/FPADM (Res. 020-2021)</p>
@@ -109,7 +111,7 @@ export function generateStandaloneHtmlCode(): string {
       phones: '0243-2413111 / 0243-2411990',
       email: 'cumplimiento@hotelpipointernacional.com',
       website: 'WWW.HOTELPIPOINTERNACIONAL.COM',
-      logoUrl: ''
+      logoUrl: '${PIPO_DEFAULT_LOGO_SVG}'
     };
 
     let activeTab = 'prov_nat';
@@ -141,9 +143,9 @@ export function generateStandaloneHtmlCode(): string {
         <table class="w-full border-2 border-black text-[10px] border-collapse">
           <tr>
             <td class="w-1/4 border-2 border-black p-1 text-center font-bold">
-              <div class="text-xs font-black">\${company.commercialName}</div>
-              <div class="text-[7.5px]">\${company.name}</div>
-              <div class="text-[7.5px]">RIF: \${company.rif}</div>
+              ${'${company.logoUrl ? `<img src="${company.logoUrl}" class="max-h-11 max-w-[110px] mx-auto object-contain mb-0.5" />` : `<div class="text-xs font-black">${company.commercialName}</div>`}'}
+              <div class="text-[7.5px]">${'${company.name}'}</div>
+              <div class="text-[7.5px]">RIF: ${'${company.rif}'}</div>
             </td>
             <td class="border-2 border-black bg-sky-600 text-white font-extrabold text-center py-2 text-xs uppercase">
               REGISTRO DE PROVEEDOR PERSONA NATURAL
